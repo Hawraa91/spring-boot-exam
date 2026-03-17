@@ -77,7 +77,7 @@ public class ProductRepository {
             }
         }
 
-        return null;
+        return product;
     }
 
     /**

@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Product;
-import com.example.demo.repository.ProductRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.model.Product;
+import com.example.demo.repository.ProductRepository;
 
 /**
  * ProductService — business logic layer for products.
@@ -21,18 +22,23 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    // TODO: Declare a private final ProductRepository field
+    //Declare a private final ProductRepository field
+    private final ProductRepository productRepository;
 
 
-    // TODO: Constructor that takes ProductRepository as parameter (constructor injection)
+    //Constructor that takes ProductRepository as parameter (constructor injection)
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
 
     /**
      * Get all products.
      */
     public List<Product> getAllProducts() {
-        // TODO: Delegate to repository
-        return null;
+        //Delegate to repository
+        return productRepository.findAll();
+
     }
 
     /**
@@ -40,8 +46,8 @@ public class ProductService {
      * Returns Optional<Product> — empty if not found.
      */
     public Optional<Product> getProductById(Long id) {
-        // TODO: Delegate to repository
-        return Optional.empty();
+        //Delegate to repository
+        return productRepository.findById(id);
     }
 
     /**
@@ -49,8 +55,8 @@ public class ProductService {
      * @return the saved product (with generated ID)
      */
     public Product createProduct(Product product) {
-        // TODO: Delegate to repository
-        return null;
+        //Delegate to repository
+        return productRepository.save(product);
     }
 
     /**
@@ -60,10 +66,20 @@ public class ProductService {
      * @return Optional containing the updated product, or empty if not found
      */
     public Optional<Product> updateProduct(Long id, Product updated) {
-        // TODO: Find existing product by ID
-        // TODO: If found, update its name, category, price, and quantity
-        // TODO: Save and return the updated product
-        // TODO: If not found, return Optional.empty()
+        // Find existing product by ID
+        // If found, update its name, category, price, and quantity
+        // Save and return the updated product
+        // If not found, return Optional.empty()
+
+        Optional<Product> existingOpt = productRepository.findById(id);
+        if (existingOpt.isPresent()) {
+            Product existing = existingOpt.get();
+            existing.setName(updated.getName());
+            existing.setCategory(updated.getCategory());
+            existing.setPrice(updated.getPrice());
+            existing.setQuantity(updated.getQuantity());
+            return Optional.of(productRepository.save(existing));
+        }
         return Optional.empty();
     }
 
@@ -72,7 +88,7 @@ public class ProductService {
      * @return true if deleted, false if not found
      */
     public boolean deleteProduct(Long id) {
-        // TODO: Delegate to repository
-        return false;
+        //Delegate to repository
+        return productRepository.deleteById(id);
     }
 }

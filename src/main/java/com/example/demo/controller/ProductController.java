@@ -1,12 +1,20 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Product;
-import com.example.demo.service.ProductService;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.example.demo.model.Product;
+import com.example.demo.service.ProductService;
 
 /**
  * ProductController — REST API endpoints for products.
@@ -27,10 +35,13 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    // TODO: Declare a private final ProductService field
+    // Declare a private final ProductService field
+    private final ProductService productService;
 
-
-    // TODO: Constructor that takes ProductService as parameter
+    // Constructor that takes ProductService as parameter
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
 
     /**
@@ -39,8 +50,8 @@ public class ProductController {
      */
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        // TODO: Implement
-        return null;
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
     }
 
     /**
@@ -49,9 +60,8 @@ public class ProductController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        // TODO: Implement
         // Hint: use .map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build())
-        return null;
+        return productService.getProductById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -60,9 +70,9 @@ public class ProductController {
      */
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        // TODO: Implement
         // Hint: use ResponseEntity.status(HttpStatus.CREATED).body(...)
-        return null;
+        Product createdProduct = productService.createProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
     /**
@@ -71,8 +81,13 @@ public class ProductController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        // TODO: Implement
-        return null;
+        //Check from my side
+        Product updatedProduct = productService.updateProduct(id, product).orElse(null);
+        if (updatedProduct != null) {
+            return ResponseEntity.ok(updatedProduct);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     /**
@@ -81,8 +96,13 @@ public class ProductController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        // TODO: Implement
         // Hint: return ResponseEntity.noContent().build() for success
-        return null;
+        boolean deleted = productService.deleteProduct(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    
     }
 }
